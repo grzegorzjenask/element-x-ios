@@ -16,6 +16,7 @@ enum SpaceServiceProxyError: Error {
 struct SpaceFilterProxy: Equatable {
     let room: SpaceRoomProxyProtocol
     let level: UInt
+    let descendants: Set<String>
     
     static func == (lhs: SpaceFilterProxy, rhs: SpaceFilterProxy) -> Bool {
         lhs.room.id == rhs.room.id

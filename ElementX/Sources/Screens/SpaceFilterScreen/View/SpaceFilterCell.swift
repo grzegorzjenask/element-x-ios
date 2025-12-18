@@ -104,10 +104,10 @@ struct SpaceFilterCell_Previews: PreviewProvider, TestablePreview {
     static var previews: some View {
         VStack(spacing: 0) {
             ForEach(spaces, id: \.id) { space in
-                SpaceFilterCell(filter: .init(room: space, level: 0),
+                SpaceFilterCell(filter: .init(room: space, level: 0, descendants: .init()),
                                 selected: false,
                                 mediaProvider: mediaProvider) { _ in }
-                SpaceFilterCell(filter: .init(room: space, level: 1),
+                SpaceFilterCell(filter: .init(room: space, level: 1, descendants: .init()),
                                 selected: true,
                                 mediaProvider: mediaProvider) { _ in }
             }

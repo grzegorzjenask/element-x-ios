@@ -147,7 +147,11 @@ struct HomeScreenContent: View {
         Button {
             context.send(viewAction: .spaceFiltering)
         } label: {
-            Label("Spaces", systemSymbol: .line3HorizontalDecrease)
+            if context.viewState.selectedSpaceFilters == 0 {
+                Label("All chats", systemSymbol: .line3HorizontalDecrease)
+            } else {
+                Label("(\(context.viewState.selectedSpaceFilters)) Spaces", systemSymbol: .line3HorizontalDecrease)
+            }
         }
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, alignment: .leading)

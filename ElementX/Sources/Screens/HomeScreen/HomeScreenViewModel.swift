@@ -121,6 +121,12 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             .weakAssign(to: \.state.hideInviteAvatars, on: self)
             .store(in: &cancellables)
         
+        spaceFilterPublisher.map(\.count)
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .weakAssign(to: \.state.selectedSpaceFilters, on: self)
+            .store(in: &cancellables)
+        
         Task {
             state.reportRoomEnabled = await userSession.clientProxy.isReportRoomSupported
         }
@@ -247,7 +253,16 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             if state.bindings.isSearchFieldFocused {
                 roomSummaryProvider?.setFilter(.search(query: state.bindings.searchQuery))
             } else {
-                roomSummaryProvider?.setFilter(.all(filters: state.bindings.filtersState.activeFilters.set))
+                if spaceFilterPublisher.value.isEmpty {
+                    roomSummaryProvider?.setFilter(.all(filters: state.bindings.filtersState.activeFilters.set))
+                } else {
+                    let roomIDs = spaceFilterPublisher.value.reduce(into: Set<String>()) { set, filter in
+                        set.formUnion(filter.descendants)
+                    }
+                    
+                    roomSummaryProvider?.setFilter(.rooms(roomsIDs: roomIDs,
+                                                          filters: state.bindings.filtersState.activeFilters.set))
+                }
             }
         }
     }

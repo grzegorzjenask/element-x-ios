@@ -76,7 +76,7 @@ class SpaceServiceProxy: SpaceServiceProxyProtocol {
             return .failure(.sdkError(error))
         }
     }
-    
+        
     // MARK: - Private
     
     private func handleSpaceListUpdates(_ updates: [SpaceListUpdate]) {
@@ -147,6 +147,7 @@ class SpaceServiceProxy: SpaceServiceProxyProtocol {
     
     private func buildSpaceFilter(from filter: MatrixRustSDK.SpaceFilter) -> SpaceFilterProxy {
         SpaceFilterProxy(room: SpaceRoomProxy(spaceRoom: filter.spaceRoom),
-                         level: UInt(max(filter.level, 0)))
+                         level: UInt(max(filter.level, 0)),
+                         descendants: Set(filter.descendants))
     }
 }

@@ -48,7 +48,7 @@ extension SpaceServiceProxyMock {
 extension SpaceServiceProxyMock.Configuration {
     static var populated: SpaceServiceProxyMock.Configuration {
         let spaceFilters = [SpaceRoomProxyProtocol].mockJoinedSpaces.map { spaceRoom in
-            SpaceFilterProxy(room: spaceRoom, level: 0)
+            SpaceFilterProxy(room: spaceRoom, level: 0, descendants: .init())
         }
         
         let spaceRoomLists = [SpaceRoomProxyProtocol].mockJoinedSpaces.map {

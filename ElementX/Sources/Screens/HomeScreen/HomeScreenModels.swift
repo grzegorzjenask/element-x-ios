@@ -111,6 +111,8 @@ struct HomeScreenViewState: BindableState {
     
     var reportRoomEnabled = false
     
+    var selectedSpaceFilters = 0
+    
     var visibleRooms: [HomeScreenRoom] {
         if roomListMode == .skeletons {
             return placeholderRooms
