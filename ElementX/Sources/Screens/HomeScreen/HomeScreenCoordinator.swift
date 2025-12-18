@@ -13,6 +13,7 @@ struct HomeScreenCoordinatorParameters {
     let userSession: UserSessionProtocol
     let bugReportService: BugReportServiceProtocol
     let selectedRoomPublisher: CurrentValuePublisher<String?, Never>
+    let spaceFilterPublisher: CurrentValuePublisher<[SpaceFilterProxy], Never>
     let appSettings: AppSettings
     let analyticsService: AnalyticsService
     let notificationManager: NotificationManagerProtocol
@@ -34,6 +35,7 @@ enum HomeScreenCoordinatorAction {
     case presentEncryptionResetScreen
     case presentStartChatScreen
     case presentGlobalSearch
+    case presentSpaceFiltering
     case logout
 }
 
@@ -52,6 +54,7 @@ final class HomeScreenCoordinator: CoordinatorProtocol {
     init(parameters: HomeScreenCoordinatorParameters) {
         viewModel = HomeScreenViewModel(userSession: parameters.userSession,
                                         selectedRoomPublisher: parameters.selectedRoomPublisher,
+                                        spaceFilterPublisher: parameters.spaceFilterPublisher,
                                         appSettings: parameters.appSettings,
                                         analyticsService: parameters.analyticsService,
                                         notificationManager: parameters.notificationManager,
@@ -89,6 +92,8 @@ final class HomeScreenCoordinator: CoordinatorProtocol {
                     actionsSubject.send(.presentStartChatScreen)
                 case .presentGlobalSearch:
                     actionsSubject.send(.presentGlobalSearch)
+                case .presentSpaceFiltering:
+                    actionsSubject.send(.presentSpaceFiltering)
                 case .logout:
                     actionsSubject.send(.logout)
                 case .transferOwnership(let roomIdentifier):

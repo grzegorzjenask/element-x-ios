@@ -935,6 +935,18 @@ extension PreviewTests {
         }
     }
 
+    func testSpaceFilterCell() async throws {
+        for (index, preview) in SpaceFilterCell_Previews._allPreviews.enumerated() {
+            try await assertSnapshots(matching: preview, step: index)
+        }
+    }
+
+    func testSpaceFilterScreen() async throws {
+        for (index, preview) in SpaceFilterScreen_Previews._allPreviews.enumerated() {
+            try await assertSnapshots(matching: preview, step: index)
+        }
+    }
+
     func testSpaceHeaderTopicSheetView() async throws {
         for (index, preview) in SpaceHeaderTopicSheetView_Previews._allPreviews.enumerated() {
             try await assertSnapshots(matching: preview, step: index)

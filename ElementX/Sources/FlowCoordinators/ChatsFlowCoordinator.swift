@@ -49,6 +49,7 @@ class ChatsFlowCoordinator: FlowCoordinatorProtocol {
     private let sidebarNavigationStackCoordinator: NavigationStackCoordinator
 
     private let selectedRoomSubject = CurrentValueSubject<String?, Never>(nil)
+    private let spaceFilterSubject = CurrentValueSubject<[SpaceFilterProxy], Never>([])
     
     private let actionsSubject: PassthroughSubject<ChatsFlowCoordinatorAction, Never> = .init()
     var actionsPublisher: AnyPublisher<ChatsFlowCoordinatorAction, Never> {
@@ -365,6 +366,7 @@ class ChatsFlowCoordinator: FlowCoordinatorProtocol {
         let parameters = HomeScreenCoordinatorParameters(userSession: userSession,
                                                          bugReportService: flowParameters.bugReportService,
                                                          selectedRoomPublisher: selectedRoomSubject.asCurrentValuePublisher(),
+                                                         spaceFilterPublisher: spaceFilterSubject.asCurrentValuePublisher(),
                                                          appSettings: flowParameters.appSettings,
                                                          analyticsService: flowParameters.analytics,
                                                          notificationManager: flowParameters.notificationManager,
@@ -403,6 +405,8 @@ class ChatsFlowCoordinator: FlowCoordinatorProtocol {
                     stateMachine.processEvent(.startStartChatFlow)
                 case .presentGlobalSearch:
                     presentGlobalSearch()
+                case .presentSpaceFiltering:
+                    presentSpaceFiltering()
                 case .logout:
                     actionsSubject.send(.logout)
                 case .presentDeclineAndBlock(let userID, let roomID):
@@ -680,6 +684,30 @@ class ChatsFlowCoordinator: FlowCoordinatorProtocol {
         flowParameters.windowManager.globalSearchWindow.rootViewController = hostingController
 
         flowParameters.windowManager.showGlobalSearch()
+    }
+    
+    // MARK: Space filtering
+    
+    private func presentSpaceFiltering() {
+        let navigationStackCoordinator = NavigationStackCoordinator()
+        let coordinator = SpaceFilterScreenCoordinator(parameters: .init(spaceService: userSession.clientProxy.spaceService,
+                                                                         mediaProvider: userSession.mediaProvider,
+                                                                         spaceFilterSubject: spaceFilterSubject))
+        
+        coordinator.actionsPublisher
+            .sink { [weak self] action in
+                guard let self else { return }
+                
+                switch action {
+                case .done:
+                    navigationSplitCoordinator.setSheetCoordinator(nil)
+                }
+            }
+            .store(in: &cancellables)
+        
+        navigationStackCoordinator.setRootCoordinator(coordinator)
+        
+        navigationSplitCoordinator.setSheetCoordinator(navigationStackCoordinator)
     }
     
     private func dismissGlobalSearch() {

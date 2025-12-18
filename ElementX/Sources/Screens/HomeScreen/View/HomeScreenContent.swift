@@ -126,7 +126,10 @@ struct HomeScreenContent: View {
         if context.viewState.shouldShowFilters || context.viewState.shouldShowBanner {
             VStack(spacing: 0) {
                 if context.viewState.shouldShowFilters {
-                    RoomListFiltersView(state: $context.filtersState)
+                    VStack(spacing: 0) {
+                        RoomListFiltersView(state: $context.filtersState)
+                        spacesFilter
+                    }
                 }
                 
                 if case let .show(state) = context.viewState.securityBannerMode {
@@ -137,6 +140,17 @@ struct HomeScreenContent: View {
             }
             .background(Color.compound.bgCanvasDefault)
         }
+    }
+    
+    @ViewBuilder
+    private var spacesFilter: some View {
+        Button {
+            context.send(viewAction: .spaceFiltering)
+        } label: {
+            Label("Spaces", systemSymbol: .line3HorizontalDecrease)
+        }
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     /// Often times the scroll view's content size isn't correct yet when this method is called e.g. when cancelling a search

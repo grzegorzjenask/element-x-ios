@@ -14,6 +14,7 @@ import MatrixRustSDKMocks
 extension SpaceServiceProxyMock {
     struct Configuration {
         var topLevelSpaces: [SpaceRoomProxyProtocol] = []
+        var spaceFilters: [SpaceFilterProxy] = []
         var joinedParentSpaces: [SpaceRoomProxyProtocol] = []
         var spaceRoomLists: [String: SpaceRoomListProxyMock] = [:]
         var leaveSpaceRooms: [LeaveSpaceRoom] = []
@@ -23,6 +24,8 @@ extension SpaceServiceProxyMock {
         self.init()
         
         topLevelSpacesPublisher = .init(configuration.topLevelSpaces)
+        spaceFilterPublisher = .init(configuration.spaceFilters)
+        
         joinedParentsChildIDReturnValue = .success(configuration.joinedParentSpaces)
         spaceRoomListSpaceIDClosure = { spaceID in
             if let spaceRoomList = configuration.spaceRoomLists[spaceID] {
@@ -31,6 +34,7 @@ extension SpaceServiceProxyMock {
                 .failure(.sdkError(ClientProxyMockError.generic))
             }
         }
+        
         leaveSpaceSpaceIDClosure = { spaceID in
             .success(LeaveSpaceHandleProxy(spaceID: spaceID,
                                            leaveHandle: LeaveSpaceHandleSDKMock(.init(rooms: configuration.leaveSpaceRooms))))
@@ -43,13 +47,20 @@ extension SpaceServiceProxyMock {
 
 extension SpaceServiceProxyMock.Configuration {
     static var populated: SpaceServiceProxyMock.Configuration {
+        let spaceFilters = [SpaceRoomProxyProtocol].mockJoinedSpaces.map { spaceRoom in
+            SpaceFilterProxy(room: spaceRoom, level: 0)
+        }
+        
         let spaceRoomLists = [SpaceRoomProxyProtocol].mockJoinedSpaces.map {
             ($0.id, SpaceRoomListProxyMock(.init(spaceRoomProxy: $0, initialSpaceRooms: .mockSpaceList)))
         }
+        
         let subSpaceRoomLists = [SpaceRoomProxyProtocol].mockSpaceList.map {
             ($0.id, SpaceRoomListProxyMock(.init(spaceRoomProxy: $0, initialSpaceRooms: .mockSingleRoom)))
         }
         
-        return .init(topLevelSpaces: .mockJoinedSpaces, spaceRoomLists: .init(uniqueKeysWithValues: spaceRoomLists + subSpaceRoomLists))
+        return .init(topLevelSpaces: .mockJoinedSpaces,
+                     spaceFilters: spaceFilters,
+                     spaceRoomLists: .init(uniqueKeysWithValues: spaceRoomLists + subSpaceRoomLists))
     }
 }

@@ -13,9 +13,19 @@ enum SpaceServiceProxyError: Error {
     case missingSpace
 }
 
+struct SpaceFilterProxy: Equatable {
+    let room: SpaceRoomProxyProtocol
+    let level: UInt
+    
+    static func == (lhs: SpaceFilterProxy, rhs: SpaceFilterProxy) -> Bool {
+        lhs.room.id == rhs.room.id
+    }
+}
+
 // sourcery: AutoMockable
 protocol SpaceServiceProxyProtocol {
     var topLevelSpacesPublisher: CurrentValuePublisher<[SpaceRoomProxyProtocol], Never> { get }
+    var spaceFilterPublisher: CurrentValuePublisher<[SpaceFilterProxy], Never> { get }
     
     func spaceRoomList(spaceID: String) async -> Result<SpaceRoomListProxyProtocol, SpaceServiceProxyError>
     /// Returns a joined space given its identifier
