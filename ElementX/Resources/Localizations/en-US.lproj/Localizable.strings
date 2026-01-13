@@ -354,6 +354,8 @@
 "confirm_recovery_key_banner_secondary_button_title" = "Forgot your recovery key?";
 "confirm_recovery_key_banner_title" = "Your key storage is out of sync";
 "crash_detection_dialog_content" = "%1$@ crashed the last time it was used. Would you like to share a crash report with us?";
+"crypto_event_key_forwarded_known_profile_dialog_content" = "%1$@ (%2$@) shared this message since you were not in the room when it was sent.";
+"crypto_event_key_forwarded_unknown_profile_dialog_content" = "%1$@ shared this message since you were not in the room when it was sent.";
 "crypto_history_visible" = "This room has been configured so that new members can read history. %1$@";
 "crypto_identity_change_pin_violation" = "%1$@'s identity was reset. %2$@";
 "crypto_identity_change_pin_violation_new" = "%1$@’s %2$@ identity was reset. %3$@";
